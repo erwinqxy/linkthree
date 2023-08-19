@@ -6,6 +6,7 @@ import instagram from '../../assets/img/instagram.png';
 import facebook from '../../assets/img/facebook.png';
 import linkedin from '../../assets/img/linkedin.png';
 import twitter from '../../assets/img/twitter.png';
+import icon from '../../assets/img/icon.png';
 
 export function shortenAddress(address) {
   if (address.length < 10) {
@@ -16,14 +17,19 @@ export function shortenAddress(address) {
   return `${firstPart}...${lastPart}`;
 }
 
-const SocialMediaContainer = ({ platformIcon, handle, profileLink }) => {
+const SocialMediaContainer = ({ platformIcon, handle, profileLink, isVerified }) => {
   return (
     <a href={profileLink} className='social-media-link'>
       <div className='social-media-container'>
         <p>
           <img className='social-media-icon' src={platformIcon} alt='social media Icon' />
         </p>
-        <p>{handle}</p>
+        <p className='social-details'>
+          {handle}{' '}
+          {isVerified && (
+            <img className='social-media-verified' src={verified} alt='social verified' />
+          )}
+        </p>
       </div>
     </a>
   );
@@ -32,6 +38,10 @@ const SocialMediaContainer = ({ platformIcon, handle, profileLink }) => {
 const Popup = () => {
   return (
     <div className='popup-container'>
+      <div className='linkthree-banner'>
+        <img src={icon} alt='LinkThree Banner' />
+        <p>LinkThree</p>
+      </div>
       <div className='profile-header'>
         <h1 className='profile-name'>
           John Doe
@@ -77,6 +87,7 @@ const Popup = () => {
             platformIcon={instagram}
             handle='@jkl'
             profileLink='https://www.instagram.com/'
+            isVerified={true}
           />
         </div>
       </div>
