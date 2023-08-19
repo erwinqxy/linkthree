@@ -1,7 +1,11 @@
 import React from 'react';
 import './Popup.css';
-import profileIcon from '../../assets/img/profileIcon.png';
 import verified from '../../assets/img/verified.png';
+import noun from '../../assets/img/noun.png';
+import instagram from '../../assets/img/instagram.png';
+import facebook from '../../assets/img/facebook.png';
+import linkedin from '../../assets/img/linkedin.png';
+import twitter from '../../assets/img/twitter.png';
 
 export function shortenAddress(address) {
   if (address.length < 10) {
@@ -12,13 +16,16 @@ export function shortenAddress(address) {
   return `${firstPart}...${lastPart}`;
 }
 
-const TwitterContainer = ({ platform, handle }) => {
+const SocialMediaContainer = ({ platformIcon, handle, profileLink }) => {
   return (
-    <div className='twitter-container'>
-      <p>
-        {platform}: {handle}
-      </p>
-    </div>
+    <a href={profileLink} className='social-media-link'>
+      <div className='social-media-container'>
+        <p>
+          <img className='social-media-icon' src={platformIcon} alt='social media Icon' />
+        </p>
+        <p>{handle}</p>
+      </div>
+    </a>
   );
 };
 
@@ -39,7 +46,7 @@ const Popup = () => {
           </a>
         </p>
         <div className='profile-icon'>
-          <img src={profileIcon} alt='Profile Icon' />
+          <img src={noun} alt='Profile Icon' />
         </div>
         <div className='profile-details'>
           <p>
@@ -50,13 +57,29 @@ const Popup = () => {
             <a href='https://www.example.com'>https://www.example.com</a>
           </p>
         </div>
-          <div className='grid-container'>
-            <TwitterContainer platform='facebook' handle='@abc' />
-            <TwitterContainer platform='twitter' handle='@def' />
-            <TwitterContainer platform='linkedin' handle='@ghi' />
-            <TwitterContainer platform='instagram' handle='@jkl' />
-          </div>
+        <div className='grid-container'>
+          <SocialMediaContainer
+            platformIcon={facebook}
+            handle='@abc'
+            profileLink='https://www.facebook.com/'
+          />
+          <SocialMediaContainer
+            platformIcon={twitter}
+            handle='@def'
+            profileLink='https://twitter.com/home'
+          />
+          <SocialMediaContainer
+            platformIcon={linkedin}
+            handle='@ghi'
+            profileLink='https://www.linkedin.com/feed/'
+          />
+          <SocialMediaContainer
+            platformIcon={instagram}
+            handle='@jkl'
+            profileLink='https://www.instagram.com/'
+          />
         </div>
+      </div>
     </div>
   );
 };
