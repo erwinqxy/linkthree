@@ -4,7 +4,7 @@ import verified from '../../assets/img/verified.png';
 import noun from '../../assets/img/noun.png';
 import instagram from '../../assets/img/instagram.png';
 import facebook from '../../assets/img/facebook.png';
-import linkedin from '../../assets/img/linkedin.png';
+import linkedinLogo from '../../assets/img/linkedinLogo.png';
 import twitter from '../../assets/img/twitter.png';
 import icon from '../../assets/img/icon.png';
 
@@ -17,15 +17,21 @@ export function shortenAddress(address) {
   return `${firstPart}...${lastPart}`;
 }
 
-const SocialMediaContainer = ({ platformIcon, handle, profileLink, isVerified }) => {
+const registerPage = 'https://verilancer-fe.vercel.app/';
+
+const SocialMediaContainer = ({ platformIcon, handle, redirectUrl, isVerified }) => {
   return (
-    <a href={profileLink} className='social-media-link'>
+    <a
+      href={redirectUrl ? redirectUrl : registerPage}
+      target='_blank'
+      className='social-media-link'
+    >
       <div className='social-media-container'>
         <p>
           <img className='social-media-icon' src={platformIcon} alt='social media Icon' />
         </p>
         <p className='social-details'>
-          {handle}{' '}
+          {handle ? handle : 'Login now'}{' '}
           {isVerified && (
             <img className='social-media-verified' src={verified} alt='social verified' />
           )}
@@ -39,8 +45,13 @@ const Popup = () => {
   return (
     <div className='popup-container'>
       <div className='linkthree-banner'>
-        <img src={icon} alt='LinkThree Banner' />
-        <p>LinkThree</p>
+        <div className='linkthree-left'>
+          <img src={icon} alt='LinkThree Banner' />
+          <p>LinkThree</p>
+        </div>
+        {/* <div className='linkthree-right'>
+          <button className='connect-wallet-button'>Connect Wallet</button>
+        </div> */}
       </div>
       <div className='profile-header'>
         <h1 className='profile-name'>
@@ -50,7 +61,10 @@ const Popup = () => {
       </div>
       <div className='profile-container'>
         <p>
-          <a href='https://etherscan.io/address/0xe94f1fa4f27d9d288ffea234bb62e1fbc086ca0c'>
+          <a
+            href='https://etherscan.io/address/0xe94f1fa4f27d9d288ffea234bb62e1fbc086ca0c'
+            target='_blank'
+          >
             {' '}
             {shortenAddress('0xE94f1fa4F27D9d288FFeA234bB62E1fBC086CA0c')}
           </a>
@@ -64,30 +78,33 @@ const Popup = () => {
           </p>
           <p>
             <strong>Website</strong>:{' '}
-            <a href='https://www.example.com'>https://www.example.com</a>
+            <a href='https://www.example.com' target='_blank'>
+              https://www.example.com
+            </a>
           </p>
         </div>
         <div className='grid-container'>
           <SocialMediaContainer
             platformIcon={facebook}
-            handle='@abc'
-            profileLink='https://www.facebook.com/'
+            handle=''
+            redirectUrl='https://www.facebook.com/'
           />
           <SocialMediaContainer
             platformIcon={twitter}
-            handle='@def'
-            profileLink='https://twitter.com/home'
+            handle='@abc'
+            redirectUrl='https://twitter.com/home'
           />
           <SocialMediaContainer
-            platformIcon={linkedin}
-            handle='@ghi'
-            profileLink='https://www.linkedin.com/feed/'
+            platformIcon={linkedinLogo}
+            handle='@def'
+            redirectUrl='https://www.linkedin.com/feed/'
+            isVerified={true}
           />
           <SocialMediaContainer
             platformIcon={instagram}
-            handle='@jkl'
-            profileLink='https://www.instagram.com/'
-            isVerified={true}
+            handle=''
+            redirectUrl='https://www.instagram.com/'
+            isVerified={false}
           />
         </div>
       </div>
