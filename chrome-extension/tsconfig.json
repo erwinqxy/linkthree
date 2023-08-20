@@ -16,5 +16,5 @@
     "jsx": "react"
   },
   "include": ["src"],
-  "exclude": ["build", "node_modules"]
+  "exclude": ["chrome-extension/build", "node_modules"]
 }

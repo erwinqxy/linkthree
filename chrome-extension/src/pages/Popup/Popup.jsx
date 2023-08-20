@@ -91,13 +91,13 @@ const Popup = () => {
           />
           <SocialMediaContainer
             platformIcon={twitter}
-            handle='@abc'
-            redirectUrl='https://twitter.com/home'
+            handle='@KingJames'
+            redirectUrl='https://twitter.com/KingJames'
           />
           <SocialMediaContainer
             platformIcon={linkedinLogo}
-            handle='@def'
-            redirectUrl='https://www.linkedin.com/feed/'
+            handle='@lebron-james'
+            redirectUrl='https://www.linkedin.com/in/lebron-james-7138ab155/'
             isVerified={true}
           />
           <SocialMediaContainer
