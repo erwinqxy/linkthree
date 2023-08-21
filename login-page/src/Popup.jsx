@@ -8,6 +8,7 @@ import linkedinLogo from './assets/img/linkedinLogo.png';
 import twitter from './assets/img/twitter.png';
 import { useLinkedIn } from 'react-linkedin-login-oauth2';
 import linkedin from 'react-linkedin-login-oauth2/assets/linkedin.png';
+import axios from 'axios';
 
 export function shortenAddress(address) {
   if (address.length < 10) {
@@ -19,6 +20,32 @@ export function shortenAddress(address) {
 }
 
 const registerPage = 'https://verilancer-fe.vercel.app/';
+
+async function getLinkedInAccessToken(authorizationCode) {
+  const requestData = new URLSearchParams({
+    grant_type: 'authorization_code',
+    code: authorizationCode,
+    client_id: '86fceak5pj0zeh',
+    client_secret: '3DscfcB2HUeQRHcZ',
+    redirect_uri: 'http://localhost:3000/linkedin',
+  });
+
+  const tokenEndpoint = 'https://www.linkedin.com/oauth/v2/accessToken';
+
+  try {
+    const response = await axios.post(tokenEndpoint, requestData.toString(), {
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+    });
+
+    const accessToken = response.data.access_token;
+    return accessToken;
+  } catch (error) {
+    console.error('Error obtaining access token:', error);
+    throw error;
+  }
+}
 
 const SocialMediaContainer = ({ platformIcon, handle, redirectUrl, isVerified, img }) => {
   if (platformIcon === linkedinLogo) {
@@ -48,13 +75,21 @@ const SocialMediaContainer = ({ platformIcon, handle, redirectUrl, isVerified, i
 
 const Popup = () => {
   const { linkedInLogin } = useLinkedIn({
-    clientId: '86vhj2q7ukf83q',
+    clientId: '86fceak5pj0zeh',
     redirectUri: `${window.location.origin}/linkedin`,
     onSuccess: (code) => {
       console.log(code);
       setCode(code);
       setErrorMessage('');
       setIsLoggedIn(true); // Move this line outside the callback
+      const authorizationCode = code;
+      getLinkedInAccessToken(authorizationCode)
+        .then((accessToken) => {
+          console.log('Access Token:', accessToken);
+        })
+        .catch((error) => {
+          console.log('Error getting access token:', error);
+        });
     },
     scope: 'r_emailaddress r_liteprofile',
     onError: (error) => {
@@ -67,6 +102,7 @@ const Popup = () => {
   const [code, setCode] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [accessToken, setAccessToken] = useState('');
 
   return (
     <div className='popup-container'>
