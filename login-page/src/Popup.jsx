@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Popup.css';
 import verified from './assets/img/verified.png';
 import noun from './assets/img/noun.png';
@@ -6,7 +6,8 @@ import instagram from './assets/img/instagram.png';
 import facebook from './assets/img/facebook.png';
 import linkedinLogo from './assets/img/linkedinLogo.png';
 import twitter from './assets/img/twitter.png';
-import icon from './assets/img/icon.png';
+import { useLinkedIn } from 'react-linkedin-login-oauth2';
+import linkedin from 'react-linkedin-login-oauth2/assets/linkedin.png';
 
 export function shortenAddress(address) {
   if (address.length < 10) {
@@ -19,12 +20,16 @@ export function shortenAddress(address) {
 
 const registerPage = 'https://verilancer-fe.vercel.app/';
 
-const SocialMediaContainer = ({ platformIcon, handle, redirectUrl, isVerified }) => {
+const SocialMediaContainer = ({ platformIcon, handle, redirectUrl, isVerified, img }) => {
+  if (platformIcon === linkedinLogo) {
+    return <div className='social-media-container'>{img}</div>;
+  }
   return (
     <a
       href={redirectUrl ? redirectUrl : registerPage}
       target='_blank'
       className='social-media-link'
+      rel='noreferrer'
     >
       <div className='social-media-container'>
         <p>
@@ -42,6 +47,28 @@ const SocialMediaContainer = ({ platformIcon, handle, redirectUrl, isVerified })
 };
 
 const Popup = () => {
+  const { linkedInLogin } = useLinkedIn({
+    clientId: '86vhj2q7ukf83q',
+    redirectUri: `${window.location.origin}/linkedin`,
+    onSuccess: (code) => {
+      console.log(code);
+      setCode(code);
+      setErrorMessage('');
+      setIsLoggedIn(true); // Move this line outside the callback
+      console.log('im in');
+    },
+    scope: 'r_emailaddress r_liteprofile',
+    onError: (error) => {
+      console.log(error);
+      setCode('');
+      setErrorMessage(error.errorMessage);
+    },
+  });
+
+  const [code, setCode] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  
   return (
     <div className='popup-container'>
       <div className='profile-header'>
@@ -55,6 +82,7 @@ const Popup = () => {
           <a
             href='https://etherscan.io/address/0xe94f1fa4f27d9d288ffea234bb62e1fbc086ca0c'
             target='_blank'
+            rel='noreferrer'
           >
             {' '}
             {shortenAddress('0xE94f1fa4F27D9d288FFeA234bB62E1fBC086CA0c')}
@@ -69,7 +97,7 @@ const Popup = () => {
           </p>
           <p>
             <strong>Website</strong>:{' '}
-            <a href='https://www.example.com' target='_blank'>
+            <a href='https://www.example.com' target='_blank' rel='noreferrer'>
               https://www.example.com
             </a>
           </p>
@@ -84,18 +112,27 @@ const Popup = () => {
             platformIcon={twitter}
             handle='@KingJames'
             redirectUrl='https://twitter.com/KingJames'
-          />
-          <SocialMediaContainer
-            platformIcon={linkedinLogo}
-            handle='@lebron-james'
-            redirectUrl='https://www.linkedin.com/in/lebron-james-7138ab155/'
             isVerified={true}
           />
           <SocialMediaContainer
+            platformIcon={linkedinLogo}
+            img={
+              isLoggedIn ? (
+                <div className='connected-label'>Connected</div>
+              ) : (
+                <img
+                  onClick={linkedInLogin}
+                  src={linkedin}
+                  alt='Log in with Linked In'
+                  style={{ maxWidth: '180px', cursor: 'pointer' }}
+                />
+              )
+            }
+          />
+          <SocialMediaContainer
             platformIcon={instagram}
-            handle=''
-            redirectUrl='https://www.instagram.com/'
-            isVerified={false}
+            handle='@kingjames'
+            redirectUrl='https://www.instagram.com/kingjames/'
           />
         </div>
       </div>
