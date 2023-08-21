@@ -55,7 +55,6 @@ const Popup = () => {
       setCode(code);
       setErrorMessage('');
       setIsLoggedIn(true); // Move this line outside the callback
-      console.log('im in');
     },
     scope: 'r_emailaddress r_liteprofile',
     onError: (error) => {
@@ -68,7 +67,7 @@ const Popup = () => {
   const [code, setCode] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  
+
   return (
     <div className='popup-container'>
       <div className='profile-header'>
@@ -118,7 +117,23 @@ const Popup = () => {
             platformIcon={linkedinLogo}
             img={
               isLoggedIn ? (
-                <div className='connected-label'>Connected</div>
+                <div>
+                  <p>
+                    <img
+                      className='social-media-icon'
+                      src={linkedinLogo}
+                      alt='social media Icon'
+                    />
+                  </p>
+                  <p className='social-details'>
+                    {'hehe'}
+                    <img
+                      className='social-media-verified'
+                      src={verified}
+                      alt='social verified'
+                    />
+                  </p>
+                </div>
               ) : (
                 <img
                   onClick={linkedInLogin}

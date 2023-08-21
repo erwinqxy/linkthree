@@ -4,8 +4,8 @@ import icon from './icon.png';
 import Popup from './Popup';
 import { useState, useEffect } from 'react';
 import detectEthereumProvider from '@metamask/detect-provider';
-
-import { formatBalance, formatChainAsNum } from './utils';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { LinkedInCallback } from 'react-linkedin-login-oauth2';
 
 export function shortenAddress(address) {
   if (address.length < 10) {
@@ -60,69 +60,75 @@ function App() {
   }, []);
 
   const updateWallet = async (accounts) => {
-    const balance = formatBalance(
-      await window.ethereum.request({
-        method: 'eth_getBalance',
-        params: [accounts[0], 'latest'],
-      })
-    );
     const chainId = await window.ethereum.request({
       method: 'eth_chainId',
     });
-    setWallet({ accounts, balance, chainId });
+    setWallet({ accounts, chainId });
   };
 
   const handleConnect = async () => {
     setIsConnecting(true);
-    await window.ethereum
-      .request({
+    try {
+      const accounts = await window.ethereum.request({
         method: 'eth_requestAccounts',
-      })
-      .then((accounts) => {
-        setError(false);
-        updateWallet(accounts);
-      })
-      .catch((err) => {
-        setError(true);
-        setErrorMessage(err.message);
       });
+      setError(false);
+      updateWallet(accounts);
+    } catch (err) {
+      setError(true);
+      setErrorMessage(err.message);
+    }
     setIsConnecting(false);
   };
 
-  const disableConnect = Boolean(wallet) && isConnecting;
+  const disableConnect = Boolean(wallet.accounts.length) && isConnecting;
 
   return (
-    <div className='App'>
-      <header className='App-header'>
-        <div className='header-content'>
-          <div className='logo-name'>
-            <img src={icon} alt='LinkThree Logo' className='company-logo' />
-            <span className='company-name'>LinkThree</span>
-          </div>
-          <div className='metamask-button-container'>
-            {window.ethereum?.isMetaMask && wallet.accounts.length < 1 && (
-              <MetamaskLoginButton disabled={disableConnect} onClick={handleConnect} />
-            )}
-            {wallet.accounts.length > 0 && (
-              <div className='wallet-accounts-container'>
-                <div className='wallet-accounts'>
-                  <p>Wallet: {shortenAddress(wallet.accounts[0])} connected 🟢</p>
+    <BrowserRouter>
+      <Routes>
+        {/* Replace with your actual components */}
+        <Route exact path='/linkedin' element={<LinkedInCallback />} />
+        <Route
+          path='/'
+          element={
+            <div className='App'>
+              <header className='App-header'>
+                <div className='header-content'>
+                  <div className='logo-name'>
+                    <img src={icon} alt='LinkThree Logo' className='company-logo' />
+                    <span className='company-name'>LinkThree</span>
+                  </div>
+                  <div className='metamask-button-container'>
+                    {window.ethereum?.isMetaMask && wallet.accounts.length < 1 && (
+                      <MetamaskLoginButton
+                        disabled={disableConnect}
+                        onClick={handleConnect}
+                      />
+                    )}
+                    {wallet.accounts.length > 0 && (
+                      <div className='wallet-accounts-container'>
+                        <div className='wallet-accounts'>
+                          <p>Wallet: {shortenAddress(wallet.accounts[0])} connected 🟢</p>
+                        </div>
+                      </div>
+                    )}
+                    {error && (
+                      <div onClick={() => setError(false)}>
+                        <strong>Error:</strong> {errorMessage}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
-            {error && (
-              <div onClick={() => setError(false)}>
-                <strong>Error:</strong> {errorMessage}
-              </div>
-            )}
-          </div>
-        </div>
 
-        <div className='login-box'>
-          <Popup />
-        </div>
-      </header>
-    </div>
+                <div className='login-box'>
+                  <Popup />
+                </div>
+              </header>
+            </div>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
