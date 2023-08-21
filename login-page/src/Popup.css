@@ -1,0 +1,155 @@
+.popup-container {
+  margin-top: 60px;
+  margin-bottom: 80px;
+  margin-left: 40px;
+
+  width: 320px;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+}
+
+.profile-name {
+  font-size: 30px;
+  margin-left: 10px;
+  color: #d2c9c9;
+}
+
+.profile-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-icon img {
+  width: 200px;
+  height: auto;
+  border-radius: 50%;
+  margin-bottom: 10px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.profile-details p {
+  margin: 5px 0;
+  color: #666666;
+}
+
+.linkedin-button {
+  background-color: #0077b5;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.linkedin-button:hover {
+  background-color: #005e91;
+}
+
+a {
+  color: #0077b5; /* Set the link color */
+  text-decoration: none; /* Remove default underline */
+  transition: color 0.3s ease; /* Add smooth color transition on hover */
+}
+
+a:hover {
+  color: #005e91; /* Change link color on hover */
+}
+
+.profile-details p a {
+  color: #4caf50; /* Set a different color for links within profile details */
+}
+
+.profile-details p a:hover {
+  color: #388e3c; /* Change color on hover */
+}
+
+.verified-icon {
+  width: 20px;
+  height: auto;
+  margin-left: 5px;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+  margin-top: 20px;
+}
+
+.social-media-container {
+  background-color: #656161;
+  padding: 15px;
+  border-radius: 15px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  min-width: 150px;
+  min-height: 80px;
+}
+
+.social-media-icon {
+  width: 20px;
+  height: auto;
+  margin-left: 5px;
+}
+
+.social-media-link {
+  text-decoration: none; /* Remove underline from the link */
+  color: inherit; /* Inherit color from parent element */
+  transition: color 0.3s ease; /* Add color transition on hover */
+}
+
+.social-media-link:hover {
+  color: #0077b5; /* Change color on hover */
+}
+
+.social-media-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+}
+
+.social-media-verified {
+  width: 16px;
+  height: 16px;
+  margin-left: 8px;
+}
+
+.social-details {
+  display: flex;
+  align-items: center; /* Vertically align content */
+}
+
+.linkthree-banner img {
+  max-width: 12%;
+  height: auto;
+  margin-right: 10px;
+  margin-left: 5px;
+}
+
+.linkthree-banner p {
+  font-size: 12px;
+  font-weight: 800;
+  color: #333333;
+}
+
+.linkthree-banner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* Vertically center content */
+  background-color: #f5f5f5; /* Grey background color */
+  padding: 5px 10px; /* Add some padding */
+  margin-bottom: 5px;
+  margin-top: 30px;
+}
