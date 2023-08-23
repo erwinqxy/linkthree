@@ -13,38 +13,34 @@ import githubLogo from './assets/img/github-logo.png';
 import axios from 'axios';
 
 export function shortenAddress(address) {
-  if (address.length < 10) {
+  if (!address) {
+    return null;
+  }
+  if (address?.length < 10) {
     return address;
   }
-  const firstPart = address.slice(0, 8);
-  const lastPart = address.slice(-4);
+  const firstPart = address?.slice(0, 8);
+  const lastPart = address?.slice(-4);
   return `${firstPart}...${lastPart}`;
 }
 
 export async function writeGithubToChain(address, githubUser) {
-  // The data you want to send in the request body
-  const requestData = {
-    address: address,
-    github: githubUser,
-  };
-
-  // Define the URL for the POST request
-  const url = 'https://link3-backend.vercel.app/setGithub';
-
-  // Set up the headers, including the authorization header if needed
-  const headers = {
-    'Content-Type': 'application/json',
-  };
-
-  // Make the POST request using Axios
-  axios
-    .post(url, requestData, { headers })
-    .then((response) => {
-      console.log('Response:', response.data);
-    })
-    .catch((error) => {
-      console.error('Error:', error);
+  try {
+    const httpClient = axios.create({
+      baseURL: 'https://link3-backend.vercel.app/proxy',
     });
+
+    const requestData = {
+      address,
+      github: githubUser,
+    };
+
+    const response = await httpClient.post('/setGithub', requestData);
+
+    console.log('Response:', response.data);
+  } catch (error) {
+    console.error('Error:', error.message);
+  }
 }
 
 const registerPage = 'https://linkthree-nu.vercel.app/';
@@ -92,7 +88,7 @@ const SocialMediaContainer = ({
   }
 };
 
-const Popup = (address) => {
+const Popup = ({address}) => {
   const [provider, setProvider] = useState('');
   const [profile, setProfile] = useState();
   const [isLinkedinLoggedIn, setIsLinkedinLoggedIn] = useState(false);
@@ -142,11 +138,11 @@ const Popup = (address) => {
       <div className='profile-container'>
         <p>
           <a
-            href='https://etherscan.io/address/0xe94f1fa4f27d9d288ffea234bb62e1fbc086ca0c'
+            href={`https://etherscan.io/address/${address}`}
             target='_blank'
             rel='noreferrer'
           >
-            {shortenAddress('0xE94f1fa4F27D9d288FFeA234bB62E1fBC086CA0c')}
+            {shortenAddress(address)}
           </a>
         </p>
         <div className='profile-icon'>
@@ -241,7 +237,7 @@ const Popup = (address) => {
                     setProvider(provider);
                     setProfile(data);
                     setIsGithubLoggedIn(true);
-                    await writeGithubToChain(address.address, data.login);
+                    await writeGithubToChain(address, data.login);
                   }}
                   onReject={(err) => {
                     console.log(err);
