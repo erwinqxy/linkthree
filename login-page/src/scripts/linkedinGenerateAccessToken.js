@@ -26,7 +26,9 @@ async function getLinkedInAccessToken(authorizationCode) {
   }
 }
 
-getLinkedInAccessToken('')
+getLinkedInAccessToken(
+  'AQT8EidxXO2qrKHeVJRIqnxef2nGTJZA4FqxOAtLIkHZeVJUG_1g2SuDB2KCEi2loQ9iaikkFbDzwLR18ys-3ok1vL_kNu10CyTmCPb70nF-8vyu2ONtD_NlwIUXnjWn_Bk7FXMSGYS1aTRTYlsJ0cazN4vQ5_Q3LH3lF-XYfDLgZIC6ttWo-JID6DsaIxHJdFMz6g_pvoEZqIwxdqw'
+)
   .then((accessToken) => {
     console.log('Access Token:', accessToken);
   })

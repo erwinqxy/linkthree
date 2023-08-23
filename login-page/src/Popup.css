@@ -126,9 +126,10 @@ a:hover {
   margin-left: 8px;
 }
 
-.social-details {
+.social-details p {
   display: flex;
   align-items: center; /* Vertically align content */
+  justify-content: center;
 }
 
 .linkthree-banner img {
