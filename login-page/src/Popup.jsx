@@ -13,6 +13,9 @@ import githubLogo from './assets/img/github-logo.png';
 import axios from 'axios';
 
 export function shortenAddress(address) {
+  if (!address) {
+    return null;
+  }
   if (address?.length < 10) {
     return address;
   }
@@ -85,7 +88,7 @@ const SocialMediaContainer = ({
   }
 };
 
-const Popup = (address) => {
+const Popup = ({address}) => {
   const [provider, setProvider] = useState('');
   const [profile, setProfile] = useState();
   const [isLinkedinLoggedIn, setIsLinkedinLoggedIn] = useState(false);
@@ -135,11 +138,11 @@ const Popup = (address) => {
       <div className='profile-container'>
         <p>
           <a
-            href='https://etherscan.io/address/0xe94f1fa4f27d9d288ffea234bb62e1fbc086ca0c'
+            href={`https://etherscan.io/address/${address}`}
             target='_blank'
             rel='noreferrer'
           >
-            {shortenAddress(address.address)}
+            {shortenAddress(address)}
           </a>
         </p>
         <div className='profile-icon'>
@@ -234,7 +237,7 @@ const Popup = (address) => {
                     setProvider(provider);
                     setProfile(data);
                     setIsGithubLoggedIn(true);
-                    await writeGithubToChain(address.address, data.login);
+                    await writeGithubToChain(address, data.login);
                   }}
                   onReject={(err) => {
                     console.log(err);
