@@ -1,11 +1,16 @@
-## Eth Toronto 2023 submission
+# Eth Toronto 2023 submission
 
+## Preview 
+
+### Register Web Page
 <img width="1017" alt="Register page" src="https://github.com/erwinqxy/linkthree/assets/72030222/a278b7a0-7b0b-45a5-b961-ea9fb2a6b1ab">
 
+### Chrome Extension 
 <div style="text-align: center;">
 <img width="575" alt="Chrome extension" src="https://github.com/erwinqxy/linkthree/assets/72030222/1458ecda-6833-4007-af32-b131adab754f" width=100>
 </div>
 
+### BlocksScan
 <img width="1842" alt="contract" src="https://github.com/erwinqxy/linkthree/assets/72030222/3601cb32-ae68-4abc-aa0b-bb8294170f74">
 
 
