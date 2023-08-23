@@ -22,29 +22,22 @@ export function shortenAddress(address) {
 }
 
 export async function writeGithubToChain(address, githubUser) {
-  // The data you want to send in the request body
-  const requestData = {
-    address: address,
-    github: githubUser,
-  };
-
-  // Define the URL for the POST request
-  const url = 'https://link3-backend.vercel.app/setGithub';
-
-  // Set up the headers, including the authorization header if needed
-  const headers = {
-    'Content-Type': 'application/json',
-  };
-
-  // Make the POST request using Axios
-  axios
-    .post(url, requestData, { headers })
-    .then((response) => {
-      console.log('Response:', response.data);
-    })
-    .catch((error) => {
-      console.error('Error:', error);
+  try {
+    const httpClient = axios.create({
+      baseURL: 'https://link3-backend.vercel.app/proxy',
     });
+
+    const requestData = {
+      address,
+      github: githubUser,
+    };
+
+    const response = await httpClient.post('/setGithub', requestData);
+
+    console.log('Response:', response.data);
+  } catch (error) {
+    console.error('Error:', error.message);
+  }
 }
 
 const registerPage = 'https://linkthree-nu.vercel.app/';
