@@ -19,7 +19,8 @@ Users with the chrome extension can right click on any link containing an XDC ad
 ### Implementation
 Our functional chrome extension lets you right click on any link containing an XDC address to look up their profile.  You can see which verified social media profiles are linked to that address, plus a short description about the address owner.
 
-The source code is in the folder "chrome extension"
+The source code & setup instructions are in the folder "chrome extension":
+https://github.com/erwinqxy/linkthree/tree/main/chrome-extension
 
 It is built on top of a smart contract deployed on XDC apothem network. The smart contract is here:
 https://explorer.apothem.network/address/xdc7b741f88a74912801ec967e2fe24af633a668319#transactions
