@@ -13,11 +13,11 @@ import githubLogo from './assets/img/github-logo.png';
 import axios from 'axios';
 
 export function shortenAddress(address) {
-  if (address.length < 10) {
+  if (address?.length < 10) {
     return address;
   }
-  const firstPart = address.slice(0, 8);
-  const lastPart = address.slice(-4);
+  const firstPart = address?.slice(0, 8);
+  const lastPart = address?.slice(-4);
   return `${firstPart}...${lastPart}`;
 }
 
@@ -146,7 +146,7 @@ const Popup = (address) => {
             target='_blank'
             rel='noreferrer'
           >
-            {shortenAddress('0xE94f1fa4F27D9d288FFeA234bB62E1fBC086CA0c')}
+            {shortenAddress(address.address)}
           </a>
         </p>
         <div className='profile-icon'>
