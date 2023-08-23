@@ -12,8 +12,17 @@ import { abi } from './LinkThreeProfileAbi'
 
 
 
-const deployedContractAddress = '0xbe4c1F5E32744C26b3d6Ad802f99696c1239f0Cc'
-const providerUrl = 'https://eth-sepolia.g.alchemy.com/v2/nhlteAOKtzO7rSq44OUNOVixQph-nSjU'
+const contractOn = {
+    sepolia: "0xbe4c1F5E32744C26b3d6Ad802f99696c1239f0Cc",
+    xdc: "0x7b741f88a74912801ec967e2fe24af633a668319"
+}
+const rpcFor = {
+    sepolia: "https://eth-sepolia.g.alchemy.com/v2/nhlteAOKtzO7rSq44OUNOVixQph-nSjU",
+    xdc: "https://erpc.apothem.network"
+}
+
+const deployedContractAddress = contractOn.xdc;
+const providerUrl = rpcFor.xdc;
 
 export function shortenAddress(address) {
     if (address.length < 10) {
@@ -56,6 +65,16 @@ const Popup = () => {
     const [userProfile, setUserProfile] = useState(null);
     const [hasProfile, setHasProfile] = useState(false);
 
+    function convertXDCtoEthereum(xdcAddress) {
+        if (xdcAddress.startsWith('xdc')) {
+            const ethereumAddress = '0x' + xdcAddress.slice(3);
+            return ethereumAddress;
+        } else {
+            throw new Error('Invalid XDC address format');
+        }
+    }
+
+
 
     const fetchUserProfile = async (userAddress) => {
         console.log("get contract...")
@@ -86,8 +105,9 @@ const Popup = () => {
         const addressParam = params.get('ethereumAddress');
 
         if (addressParam) {
-            setEthereumAddress(addressParam);
-            console.log('addressParam', addressParam);
+            const ethStyleAddress = convertXDCtoEthereum(addressParam)
+            setEthereumAddress(ethStyleAddress);
+            console.log('addressParam', ethStyleAddress);
         }
 
 

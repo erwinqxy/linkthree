@@ -34,7 +34,7 @@ function createContextMenu() {
 
 // Function to extract Ethereum address from a URL
 function extractEthereumAddress(url) {
-    const ethereumAddressRegex = /0x[a-fA-F0-9]{40}/; // Example regex for Ethereum addresses
+    const ethereumAddressRegex = /[xX][dD][cC][a-fA-F0-9]{40}/; // ethereum starts with 0x. xdc starts with xdc
     const match = url.match(ethereumAddressRegex);
     if (match) {
         return match[0];
