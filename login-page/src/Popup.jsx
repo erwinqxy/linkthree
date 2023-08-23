@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useEffect } from 'react';
 import './Popup.css';
 import verified from './assets/img/verified.png';
 import noun from './assets/img/noun.png';
@@ -7,55 +7,96 @@ import linkedinLogo from './assets/img/linkedinLogo.png';
 import twitter from './assets/img/twitter.png';
 import { useLinkedIn } from 'react-linkedin-login-oauth2';
 import linkedin from 'react-linkedin-login-oauth2/assets/linkedin.png';
-import axios from 'axios';
 import { LoginSocialGithub } from 'reactjs-social-login';
 import { GithubLoginButton } from 'react-social-login-buttons';
 import githubLogo from './assets/img/github-logo.png';
-
+import axios from 'axios';
 
 export function shortenAddress(address) {
   if (address.length < 10) {
-    return address; // Address is too short to shorten
+    return address;
   }
   const firstPart = address.slice(0, 8);
   const lastPart = address.slice(-4);
   return `${firstPart}...${lastPart}`;
 }
 
-const registerPage = 'https://verilancer-fe.vercel.app/';
+export async function writeGithubToChain(address, githubUser) {
+  // The data you want to send in the request body
+  const requestData = {
+    address: address,
+    github: githubUser,
+  };
 
-const SocialMediaContainer = ({ platformIcon, handle, redirectUrl, isVerified, img }) => {
+  // Define the URL for the POST request
+  const url = 'https://link3-backend.vercel.app/setGithub';
+
+  // Set up the headers, including the authorization header if needed
+  const headers = {
+    'Content-Type': 'application/json',
+  };
+
+  // Make the POST request using Axios
+  axios
+    .post(url, requestData, { headers })
+    .then((response) => {
+      console.log('Response:', response.data);
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+    });
+}
+
+const registerPage = 'https://linkthree-nu.vercel.app/';
+
+const SocialMediaContainer = ({
+  platformIcon,
+  handle,
+  redirectUrl,
+  isVerified,
+  component,
+}) => {
   if (platformIcon === linkedinLogo) {
-    return <div className='social-media-container'>{img}</div>;
+    return <div className='social-media-container'>{component}</div>;
+  } else if (platformIcon === githubLogo) {
+    return <div>{component}</div>;
+  } else {
+    return (
+      <a
+        href={redirectUrl ? redirectUrl : registerPage}
+        target='_blank'
+        className='social-media-link'
+        rel='noreferrer'
+      >
+        <div className='social-media-container'>
+          <p>
+            <img
+              className='social-media-icon'
+              src={platformIcon}
+              alt='social media Icon'
+            />
+          </p>
+          <p className='social-details'>
+            {handle ? handle : 'Login now'}{' '}
+            {isVerified && (
+              <img
+                className='social-media-verified'
+                src={verified}
+                alt='social verified'
+              />
+            )}
+          </p>
+        </div>
+      </a>
+    );
   }
-  if (platformIcon === 'github') {
-    return <div>{img}</div>;
-  }
-  return (
-    <a
-      href={redirectUrl ? redirectUrl : registerPage}
-      target='_blank'
-      className='social-media-link'
-      rel='noreferrer'
-    >
-      <div className='social-media-container'>
-        <p>
-          <img className='social-media-icon' src={platformIcon} alt='social media Icon' />
-        </p>
-        <p className='social-details'>
-          {handle ? handle : 'Login now'}{' '}
-          {isVerified && (
-            <img className='social-media-verified' src={verified} alt='social verified' />
-          )}
-        </p>
-      </div>
-    </a>
-  );
 };
 
-const Popup = () => {
+const Popup = (address) => {
   const [provider, setProvider] = useState('');
   const [profile, setProfile] = useState();
+  const [isLinkedinLoggedIn, setIsLinkedinLoggedIn] = useState(false);
+  const [isGithubLoggedIn, setIsGithubLoggedIn] = useState(false);
 
   const onLoginStart = useCallback(() => {
     alert('logging in');
@@ -74,7 +115,6 @@ const Popup = () => {
       console.log(code);
       setCode(code);
       setErrorMessage('');
-      setIsLinkedinLoggedIn(true); // Move this line outside the callback
     },
     scope: 'r_emailaddress r_liteprofile',
     onError: (error) => {
@@ -86,9 +126,10 @@ const Popup = () => {
 
   const [code, setCode] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
-  const [isLinkedinLoggedIn, setIsLinkedinLoggedIn] = useState(false);
-  const [accessToken, setAccessToken] = useState('');
-  const [isGithubLoggedIn, setIsGithubLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setIsLinkedinLoggedIn(Boolean(code));
+  }, [code]);
 
   return (
     <div className='popup-container'>
@@ -105,7 +146,6 @@ const Popup = () => {
             target='_blank'
             rel='noreferrer'
           >
-            {' '}
             {shortenAddress('0xE94f1fa4F27D9d288FFeA234bB62E1fBC086CA0c')}
           </a>
         </p>
@@ -137,9 +177,9 @@ const Popup = () => {
           />
           <SocialMediaContainer
             platformIcon={linkedinLogo}
-            img={
+            component={
               isLinkedinLoggedIn ? (
-                <div >
+                <div>
                   <p>
                     <img
                       className='social-media-icon'
@@ -167,12 +207,10 @@ const Popup = () => {
             }
           />
           <SocialMediaContainer
-            platformIcon={'github'}
-            handle='@KingJames'
-            redirectUrl='https://twitter.com/KingJames'
+            platformIcon={githubLogo}
             isVerified={true}
-            img={
-              setIsGithubLoggedIn && profile ? (
+            component={
+              profile ? (
                 <div className='social-media-container'>
                   <p>
                     <img
@@ -198,11 +236,12 @@ const Popup = () => {
                   redirect_uri={process.env.REACT_APP_REDIRECT_URI}
                   onLoginStart={onLoginStart}
                   onLogoutSuccess={onLogoutSuccess}
-                  onResolve={({ provider, data }) => {
+                  onResolve={async ({ provider, data }) => {
                     console.log(data);
                     setProvider(provider);
                     setProfile(data);
                     setIsGithubLoggedIn(true);
+                    await writeGithubToChain(address.address, data.login);
                   }}
                   onReject={(err) => {
                     console.log(err);

@@ -121,7 +121,7 @@ function App() {
                 </div>
 
                 <div className='login-box'>
-                  <Popup />
+                  <Popup address={wallet.accounts[0]} />
                 </div>
               </header>
             </div>
