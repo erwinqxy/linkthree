@@ -1,115 +1,187 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './Popup.css';
 import verified from '../../assets/img/verified.png';
 import noun from '../../assets/img/noun.png';
-import instagram from '../../assets/img/instagram.png';
+import github from '../../assets/img/github.png';
 import facebook from '../../assets/img/facebook.png';
 import linkedinLogo from '../../assets/img/linkedinLogo.png';
 import twitter from '../../assets/img/twitter.png';
 import icon from '../../assets/img/icon.png';
+import { ethers } from 'ethers';
+import { abi } from './LinkThreeProfileAbi'
+
+
+
+const deployedContractAddress = '0xbe4c1F5E32744C26b3d6Ad802f99696c1239f0Cc'
+const providerUrl = 'https://eth-sepolia.g.alchemy.com/v2/nhlteAOKtzO7rSq44OUNOVixQph-nSjU'
 
 export function shortenAddress(address) {
-  if (address.length < 10) {
-    return address; // Address is too short to shorten
-  }
-  const firstPart = address.slice(0, 6);
-  const lastPart = address.slice(-3);
-  return `${firstPart}...${lastPart}`;
+    if (address.length < 10) {
+        return address; // Address is too short to shorten
+    }
+    const firstPart = address.slice(0, 6);
+    const lastPart = address.slice(-3);
+    return `${firstPart}...${lastPart}`;
 }
-
-const registerPage = 'https://verilancer-fe.vercel.app/';
-
-const SocialMediaContainer = ({ platformIcon, handle, redirectUrl, isVerified }) => {
-  return (
-    <a
-      href={redirectUrl ? redirectUrl : registerPage}
-      target='_blank'
-      className='social-media-link'
-    >
-      <div className='social-media-container'>
-        <p>
-          <img className='social-media-icon' src={platformIcon} alt='social media Icon' />
-        </p>
-        <p className='social-details'>
-          {handle ? handle : 'Login now'}{' '}
-          {isVerified && (
-            <img className='social-media-verified' src={verified} alt='social verified' />
-          )}
-        </p>
-      </div>
-    </a>
-  );
+const SocialMediaContainer = ({ platformIcon, handle, redirectUrl, isVerified, display = true }) => {
+    return (
+        <>
+            {display && (
+                <a
+                    href={redirectUrl ? redirectUrl : registerPage}
+                    target='_blank'
+                    className='social-media-link'
+                >
+                    <div className='social-media-container'>
+                        <p>
+                            <img className='social-media-icon' src={platformIcon} alt='social media Icon' />
+                        </p>
+                        <p className='social-details'>
+                            {handle ? handle : 'Login now'}{' '}
+                            {isVerified && (
+                                <img className='social-media-verified' src={verified} alt='social verified' />
+                            )}
+                        </p>
+                    </div>
+                </a>
+            )}
+        </>
+    );
 };
 
 const Popup = () => {
-  return (
-    <div className='popup-container'>
-      <div className='linkthree-banner'>
-        <div className='linkthree-left'>
-          <img src={icon} alt='LinkThree Banner' />
-          <p>LinkThree</p>
-        </div>
-        {/* <div className='linkthree-right'>
+
+    console.log("popup")
+    const [ethereumAddress, setEthereumAddress] = useState('');
+    const [userProfile, setUserProfile] = useState(null);
+    const [hasProfile, setHasProfile] = useState(false);
+
+
+    const fetchUserProfile = async (userAddress) => {
+        console.log("get contract...")
+        const provider = new ethers.providers.JsonRpcProvider(providerUrl);
+
+        const theContract = new ethers.Contract(
+            deployedContractAddress,
+            abi,
+            provider
+        );
+
+        console.log(theContract)
+
+        try {
+
+            const userProfileData = await theContract.getUserProfile(userAddress);
+            setUserProfile(userProfileData);
+            console.log("userProfileData", userProfileData)
+        } catch (error) {
+            console.log("error fetching smart contract data")
+            console.log(error)
+        }
+    };
+
+    useEffect(() => {
+
+        const params = new URLSearchParams(window.location.search);
+        const addressParam = params.get('ethereumAddress');
+
+        if (addressParam) {
+            setEthereumAddress(addressParam);
+            console.log('addressParam', addressParam);
+        }
+
+
+    }, []);
+
+    useEffect(() => {
+        if (ethereumAddress) {
+            fetchUserProfile(ethereumAddress)
+                .then(() => setHasProfile(true))
+                .catch(error => console.error("Error fetching user profile:", error));
+        }
+    }, [ethereumAddress]);
+
+    useEffect(() => {
+        let hasValueInFirstFourPositions;
+
+        if (userProfile) {
+            console.log("Got user profile yo: ", userProfile)
+            hasValueInFirstFourPositions = userProfile.slice(0, 4).some(item => item !== '');
+        }
+
+        if (!hasValueInFirstFourPositions) {
+            setHasProfile(false);
+            return;
+        }
+    }, [userProfile]);
+
+    useEffect(() => {
+        console.log("hasProfile", hasProfile)
+    }, [hasProfile]);
+
+
+    return (
+        <div className='popup-container'>
+            <div className='linkthree-banner'>
+                <div className='linkthree-left'>
+                    <img src={icon} alt='LinkThree Banner' />
+                    <p>LinkThree</p>
+                </div>
+                {/* <div className='linkthree-right'>
           <button className='connect-wallet-button'>Connect Wallet</button>
         </div> */}
-      </div>
-      <div className='profile-header'>
-        <h1 className='profile-name'>
-          John Doe
-          <img className='verified-icon' src={verified} alt='Profile Icon' />
-        </h1>
-      </div>
-      <div className='profile-container'>
-        <p>
-          <a
-            href='https://etherscan.io/address/0xe94f1fa4f27d9d288ffea234bb62e1fbc086ca0c'
-            target='_blank'
-          >
-            {' '}
-            {shortenAddress('0xE94f1fa4F27D9d288FFeA234bB62E1fBC086CA0c')}
-          </a>
-        </p>
-        <div className='profile-icon'>
-          <img src={noun} alt='Profile Icon' />
+            </div>
+            <div className='profile-header'>
+                <h1 className='profile-name'>
+                    {shortenAddress(ethereumAddress)}
+                    {hasProfile && (
+                        <img className='verified-icon' src={verified} alt='Profile Icon' />
+                    )}
+                </h1>
+            </div>
+            <div className='profile-container'>
+
+                <div className='profile-icon'>
+                    <img src={noun} alt='Profile Icon' />
+                </div>
+                <div className='profile-details'>
+
+                    {hasProfile &&
+                        <p><strong>About</strong>: {userProfile.about} </p>}
+
+
+                </div>
+                {hasProfile ? (
+                    <div className='grid-container'>
+
+                        <SocialMediaContainer
+                            platformIcon={twitter}
+                            handle={userProfile.twitter}
+                            redirectUrl={`https://twitter.com/${userProfile.twitter}`}
+                            isVerified={true}
+                            display={userProfile.twitter}
+                        />
+                        <SocialMediaContainer
+                            platformIcon={linkedinLogo}
+                            handle={userProfile.linkedin}
+                            redirectUrl={`https://www.linkedin.com/in/${userProfile.linkedin}`}
+                            isVerified={true}
+                            display={userProfile.linkedin}
+                        />
+                        <SocialMediaContainer
+                            platformIcon={github}
+                            handle={userProfile.github}
+                            redirectUrl={`https://www.github.com/${userProfile.github}`}
+                            isVerified={true}
+                            display={userProfile.github}
+                        />
+                    </div>
+                ) : (
+                    <div className='no-profile-text'>No profile for this address</div>
+                )}
+            </div>
         </div>
-        <div className='profile-details'>
-          <p>
-            <strong>About</strong>: Web3 Developer @ FuturistConf
-          </p>
-          <p>
-            <strong>Website</strong>:{' '}
-            <a href='https://www.example.com' target='_blank'>
-              https://www.example.com
-            </a>
-          </p>
-        </div>
-        <div className='grid-container'>
-          <SocialMediaContainer
-            platformIcon={facebook}
-            handle=''
-            redirectUrl='https://www.facebook.com/'
-          />
-          <SocialMediaContainer
-            platformIcon={twitter}
-            handle='@KingJames'
-            redirectUrl='https://twitter.com/KingJames'
-          />
-          <SocialMediaContainer
-            platformIcon={linkedinLogo}
-            handle='@lebron-james'
-            redirectUrl='https://www.linkedin.com/in/lebron-james-7138ab155/'
-            isVerified={true}
-          />
-          <SocialMediaContainer
-            platformIcon={instagram}
-            handle=''
-            redirectUrl='https://www.instagram.com/'
-            isVerified={false}
-          />
-        </div>
-      </div>
-    </div>
-  );
+    );
 };
 
 export default Popup;
